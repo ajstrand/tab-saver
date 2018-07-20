@@ -1,0 +1,29 @@
+{
+  "name": "my_tab_saver",
+  "version": "1.0.0",
+  "description": "saves tabs in one tab to reduce memory consumption",
+  "main": "./src/index.js",
+  "author": "alex strand",
+  "license": "MIT",
+  "scripts": {
+    "build": "cross-env NODE_ENV=production webpack --config webpack.prod.config.js",
+    "start": "cross-env NODE_ENV=development webpack-dev-server --open --config webpack.dev.config.js"
+  },
+  "dependencies": {
+    "babel-core": "^6.26.0",
+    "babel-loader": "^7.1.4",
+    "babel-preset-env": "^1.7.0",
+    "babel-preset-react": "^6.24.1",
+    "cross-env": "^5.2.0",
+    "css-loader": "^0.28.11",
+    "mini-css-extract-plugin": "^0.4.1",
+    "node-sass": "^4.8.3",
+    "react": "^16.4.1",
+    "react-dom": "^16.4.1",
+    "sass-loader": "^6.0.7",
+    "style-loader": "^0.20.3",
+    "webpack": "^4.5.0",
+    "webpack-cli": "^2.0.14",
+    "webpack-dev-server": "^3.1.1"
+  }
+}
