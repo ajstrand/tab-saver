@@ -1,15 +1,14 @@
-import React from "react";
-import List from "./List";
-class App extends React.Component {
+import React, {Fragment, Component} from "react";
+import ListContainer from "./ListContainer";
+class App extends Component {
   constructor(props){
     super(props);
     this.state = {
-
     };
   }
   render (){
     return (
-      <List/>
+      <ListContainer></ListContainer>
     );
   }
 }

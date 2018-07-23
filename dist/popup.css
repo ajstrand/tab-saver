@@ -11,6 +11,7 @@ p {
 }
 
 button {
+  cursor: pointer;
   outline: none;
   background-color: papayawhip;
   border: 2px solid palevioletred;
@@ -18,7 +19,12 @@ button {
   color: palevioletred;
 }
 
+p {
+  font-size: 30px;
+}
+
 li {
+  font-size: 30px;
   list-style-type: none;
   color: palevioletred;
 }
