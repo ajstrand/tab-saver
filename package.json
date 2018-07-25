@@ -6,6 +6,7 @@
   "author": "alex strand",
   "license": "MIT",
   "scripts": {
+    "start": "bsb -make-world -w",
     "build-prod": "cross-env NODE_ENV=production webpack --config webpack.prod.config.js",
     "build-dev": "cross-env NODE_ENV=production webpack --config webpack.dev.config.js"
   },
@@ -14,12 +15,14 @@
     "babel-loader": "^7.1.4",
     "babel-preset-env": "^1.7.0",
     "babel-preset-react": "^6.24.1",
+    "bs-platform": "^4.0.1",
     "cross-env": "^5.2.0",
     "css-loader": "^0.28.11",
     "mini-css-extract-plugin": "^0.4.1",
     "node-sass": "^4.8.3",
     "react": "^16.4.1",
     "react-dom": "^16.4.1",
+    "reason-react": "^0.4.2",
     "sass-loader": "^6.0.7",
     "style-loader": "^0.20.3",
     "webpack": "^4.5.0",
