@@ -86,6 +86,420 @@
 /************************************************************************/
 /******/ ({
 
+/***/ "./node_modules/bs-platform/lib/js/array.js":
+/*!**************************************************!*\
+  !*** ./node_modules/bs-platform/lib/js/array.js ***!
+  \**************************************************/
+/*! no static exports found */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+
+var Curry = __webpack_require__(/*! ./curry.js */ "./node_modules/bs-platform/lib/js/curry.js");
+var Js_exn = __webpack_require__(/*! ./js_exn.js */ "./node_modules/bs-platform/lib/js/js_exn.js");
+var Caml_array = __webpack_require__(/*! ./caml_array.js */ "./node_modules/bs-platform/lib/js/caml_array.js");
+var Caml_exceptions = __webpack_require__(/*! ./caml_exceptions.js */ "./node_modules/bs-platform/lib/js/caml_exceptions.js");
+var Caml_builtin_exceptions = __webpack_require__(/*! ./caml_builtin_exceptions.js */ "./node_modules/bs-platform/lib/js/caml_builtin_exceptions.js");
+
+function init(l, f) {
+  if (l === 0) {
+    return (/* array */[]
+    );
+  } else if (l < 0) {
+    throw [Caml_builtin_exceptions.invalid_argument, "Array.init"];
+  } else {
+    var res = Caml_array.caml_make_vect(l, Curry._1(f, 0));
+    for (var i = 1, i_finish = l - 1 | 0; i <= i_finish; ++i) {
+      res[i] = Curry._1(f, i);
+    }
+    return res;
+  }
+}
+
+function make_matrix(sx, sy, init) {
+  var res = Caml_array.caml_make_vect(sx, /* array */[]);
+  for (var x = 0, x_finish = sx - 1 | 0; x <= x_finish; ++x) {
+    res[x] = Caml_array.caml_make_vect(sy, init);
+  }
+  return res;
+}
+
+function copy(a) {
+  var l = a.length;
+  if (l === 0) {
+    return (/* array */[]
+    );
+  } else {
+    return Caml_array.caml_array_sub(a, 0, l);
+  }
+}
+
+function append(a1, a2) {
+  var l1 = a1.length;
+  if (l1 === 0) {
+    return copy(a2);
+  } else if (a2.length === 0) {
+    return Caml_array.caml_array_sub(a1, 0, l1);
+  } else {
+    return a1.concat(a2);
+  }
+}
+
+function sub(a, ofs, len) {
+  if (len < 0 || ofs > (a.length - len | 0)) {
+    throw [Caml_builtin_exceptions.invalid_argument, "Array.sub"];
+  } else {
+    return Caml_array.caml_array_sub(a, ofs, len);
+  }
+}
+
+function fill(a, ofs, len, v) {
+  if (ofs < 0 || len < 0 || ofs > (a.length - len | 0)) {
+    throw [Caml_builtin_exceptions.invalid_argument, "Array.fill"];
+  } else {
+    for (var i = ofs, i_finish = (ofs + len | 0) - 1 | 0; i <= i_finish; ++i) {
+      a[i] = v;
+    }
+    return (/* () */0
+    );
+  }
+}
+
+function blit(a1, ofs1, a2, ofs2, len) {
+  if (len < 0 || ofs1 < 0 || ofs1 > (a1.length - len | 0) || ofs2 < 0 || ofs2 > (a2.length - len | 0)) {
+    throw [Caml_builtin_exceptions.invalid_argument, "Array.blit"];
+  } else {
+    return Caml_array.caml_array_blit(a1, ofs1, a2, ofs2, len);
+  }
+}
+
+function iter(f, a) {
+  for (var i = 0, i_finish = a.length - 1 | 0; i <= i_finish; ++i) {
+    Curry._1(f, a[i]);
+  }
+  return (/* () */0
+  );
+}
+
+function map(f, a) {
+  var l = a.length;
+  if (l === 0) {
+    return (/* array */[]
+    );
+  } else {
+    var r = Caml_array.caml_make_vect(l, Curry._1(f, a[0]));
+    for (var i = 1, i_finish = l - 1 | 0; i <= i_finish; ++i) {
+      r[i] = Curry._1(f, a[i]);
+    }
+    return r;
+  }
+}
+
+function iteri(f, a) {
+  for (var i = 0, i_finish = a.length - 1 | 0; i <= i_finish; ++i) {
+    Curry._2(f, i, a[i]);
+  }
+  return (/* () */0
+  );
+}
+
+function mapi(f, a) {
+  var l = a.length;
+  if (l === 0) {
+    return (/* array */[]
+    );
+  } else {
+    var r = Caml_array.caml_make_vect(l, Curry._2(f, 0, a[0]));
+    for (var i = 1, i_finish = l - 1 | 0; i <= i_finish; ++i) {
+      r[i] = Curry._2(f, i, a[i]);
+    }
+    return r;
+  }
+}
+
+function to_list(a) {
+  var _i = a.length - 1 | 0;
+  var _res = /* [] */0;
+  while (true) {
+    var res = _res;
+    var i = _i;
+    if (i < 0) {
+      return res;
+    } else {
+      _res = /* :: */[a[i], res];
+      _i = i - 1 | 0;
+      continue;
+    }
+  };
+}
+
+function list_length(_accu, _param) {
+  while (true) {
+    var param = _param;
+    var accu = _accu;
+    if (param) {
+      _param = param[1];
+      _accu = accu + 1 | 0;
+      continue;
+    } else {
+      return accu;
+    }
+  };
+}
+
+function of_list(l) {
+  if (l) {
+    var a = Caml_array.caml_make_vect(list_length(0, l), l[0]);
+    var _i = 1;
+    var _param = l[1];
+    while (true) {
+      var param = _param;
+      var i = _i;
+      if (param) {
+        a[i] = param[0];
+        _param = param[1];
+        _i = i + 1 | 0;
+        continue;
+      } else {
+        return a;
+      }
+    };
+  } else {
+    return (/* array */[]
+    );
+  }
+}
+
+function fold_left(f, x, a) {
+  var r = x;
+  for (var i = 0, i_finish = a.length - 1 | 0; i <= i_finish; ++i) {
+    r = Curry._2(f, r, a[i]);
+  }
+  return r;
+}
+
+function fold_right(f, a, x) {
+  var r = x;
+  for (var i = a.length - 1 | 0; i >= 0; --i) {
+    r = Curry._2(f, a[i], r);
+  }
+  return r;
+}
+
+var Bottom = Caml_exceptions.create("Array.Bottom");
+
+function sort(cmp, a) {
+  var maxson = function maxson(l, i) {
+    var i31 = ((i + i | 0) + i | 0) + 1 | 0;
+    var x = i31;
+    if ((i31 + 2 | 0) < l) {
+      if (Curry._2(cmp, Caml_array.caml_array_get(a, i31), Caml_array.caml_array_get(a, i31 + 1 | 0)) < 0) {
+        x = i31 + 1 | 0;
+      }
+      if (Curry._2(cmp, Caml_array.caml_array_get(a, x), Caml_array.caml_array_get(a, i31 + 2 | 0)) < 0) {
+        x = i31 + 2 | 0;
+      }
+      return x;
+    } else if ((i31 + 1 | 0) < l && Curry._2(cmp, Caml_array.caml_array_get(a, i31), Caml_array.caml_array_get(a, i31 + 1 | 0)) < 0) {
+      return i31 + 1 | 0;
+    } else if (i31 < l) {
+      return i31;
+    } else {
+      throw [Bottom, i];
+    }
+  };
+  var trickle = function trickle(l, i, e) {
+    try {
+      var l$1 = l;
+      var _i = i;
+      var e$1 = e;
+      while (true) {
+        var i$1 = _i;
+        var j = maxson(l$1, i$1);
+        if (Curry._2(cmp, Caml_array.caml_array_get(a, j), e$1) > 0) {
+          Caml_array.caml_array_set(a, i$1, Caml_array.caml_array_get(a, j));
+          _i = j;
+          continue;
+        } else {
+          return Caml_array.caml_array_set(a, i$1, e$1);
+        }
+      };
+    } catch (raw_exn) {
+      var exn = Js_exn.internalToOCamlException(raw_exn);
+      if (exn[0] === Bottom) {
+        return Caml_array.caml_array_set(a, exn[1], e);
+      } else {
+        throw exn;
+      }
+    }
+  };
+  var bubble = function bubble(l, i) {
+    try {
+      var l$1 = l;
+      var _i = i;
+      while (true) {
+        var i$1 = _i;
+        var j = maxson(l$1, i$1);
+        Caml_array.caml_array_set(a, i$1, Caml_array.caml_array_get(a, j));
+        _i = j;
+        continue;
+      };
+    } catch (raw_exn) {
+      var exn = Js_exn.internalToOCamlException(raw_exn);
+      if (exn[0] === Bottom) {
+        return exn[1];
+      } else {
+        throw exn;
+      }
+    }
+  };
+  var trickleup = function trickleup(_i, e) {
+    while (true) {
+      var i = _i;
+      var father = (i - 1 | 0) / 3 | 0;
+      if (i === father) {
+        throw [Caml_builtin_exceptions.assert_failure,
+        /* tuple */["array.ml", 173, 4]];
+      }
+      if (Curry._2(cmp, Caml_array.caml_array_get(a, father), e) < 0) {
+        Caml_array.caml_array_set(a, i, Caml_array.caml_array_get(a, father));
+        if (father > 0) {
+          _i = father;
+          continue;
+        } else {
+          return Caml_array.caml_array_set(a, 0, e);
+        }
+      } else {
+        return Caml_array.caml_array_set(a, i, e);
+      }
+    };
+  };
+  var l = a.length;
+  for (var i = ((l + 1 | 0) / 3 | 0) - 1 | 0; i >= 0; --i) {
+    trickle(l, i, Caml_array.caml_array_get(a, i));
+  }
+  for (var i$1 = l - 1 | 0; i$1 >= 2; --i$1) {
+    var e = Caml_array.caml_array_get(a, i$1);
+    Caml_array.caml_array_set(a, i$1, Caml_array.caml_array_get(a, 0));
+    trickleup(bubble(i$1, 0), e);
+  }
+  if (l > 1) {
+    var e$1 = Caml_array.caml_array_get(a, 1);
+    Caml_array.caml_array_set(a, 1, Caml_array.caml_array_get(a, 0));
+    return Caml_array.caml_array_set(a, 0, e$1);
+  } else {
+    return 0;
+  }
+}
+
+function stable_sort(cmp, a) {
+  var merge = function merge(src1ofs, src1len, src2, src2ofs, src2len, dst, dstofs) {
+    var src1r = src1ofs + src1len | 0;
+    var src2r = src2ofs + src2len | 0;
+    var _i1 = src1ofs;
+    var _s1 = Caml_array.caml_array_get(a, src1ofs);
+    var _i2 = src2ofs;
+    var _s2 = Caml_array.caml_array_get(src2, src2ofs);
+    var _d = dstofs;
+    while (true) {
+      var d = _d;
+      var s2 = _s2;
+      var i2 = _i2;
+      var s1 = _s1;
+      var i1 = _i1;
+      if (Curry._2(cmp, s1, s2) <= 0) {
+        Caml_array.caml_array_set(dst, d, s1);
+        var i1$1 = i1 + 1 | 0;
+        if (i1$1 < src1r) {
+          _d = d + 1 | 0;
+          _s1 = Caml_array.caml_array_get(a, i1$1);
+          _i1 = i1$1;
+          continue;
+        } else {
+          return blit(src2, i2, dst, d + 1 | 0, src2r - i2 | 0);
+        }
+      } else {
+        Caml_array.caml_array_set(dst, d, s2);
+        var i2$1 = i2 + 1 | 0;
+        if (i2$1 < src2r) {
+          _d = d + 1 | 0;
+          _s2 = Caml_array.caml_array_get(src2, i2$1);
+          _i2 = i2$1;
+          continue;
+        } else {
+          return blit(a, i1, dst, d + 1 | 0, src1r - i1 | 0);
+        }
+      }
+    };
+  };
+  var isortto = function isortto(srcofs, dst, dstofs, len) {
+    for (var i = 0, i_finish = len - 1 | 0; i <= i_finish; ++i) {
+      var e = Caml_array.caml_array_get(a, srcofs + i | 0);
+      var j = (dstofs + i | 0) - 1 | 0;
+      while (j >= dstofs && Curry._2(cmp, Caml_array.caml_array_get(dst, j), e) > 0) {
+        Caml_array.caml_array_set(dst, j + 1 | 0, Caml_array.caml_array_get(dst, j));
+        j = j - 1 | 0;
+      };
+      Caml_array.caml_array_set(dst, j + 1 | 0, e);
+    }
+    return (/* () */0
+    );
+  };
+  var sortto = function sortto(srcofs, dst, dstofs, len) {
+    if (len <= 5) {
+      return isortto(srcofs, dst, dstofs, len);
+    } else {
+      var l1 = len / 2 | 0;
+      var l2 = len - l1 | 0;
+      sortto(srcofs + l1 | 0, dst, dstofs + l1 | 0, l2);
+      sortto(srcofs, a, srcofs + l2 | 0, l1);
+      return merge(srcofs + l2 | 0, l1, dst, dstofs + l1 | 0, l2, dst, dstofs);
+    }
+  };
+  var l = a.length;
+  if (l <= 5) {
+    return isortto(0, a, 0, l);
+  } else {
+    var l1 = l / 2 | 0;
+    var l2 = l - l1 | 0;
+    var t = Caml_array.caml_make_vect(l2, Caml_array.caml_array_get(a, 0));
+    sortto(l1, t, 0, l2);
+    sortto(0, a, l2, l1);
+    return merge(l2, l1, t, 0, l2, a, 0);
+  }
+}
+
+var create_matrix = make_matrix;
+
+var concat = Caml_array.caml_array_concat;
+
+var fast_sort = stable_sort;
+
+exports.init = init;
+exports.make_matrix = make_matrix;
+exports.create_matrix = create_matrix;
+exports.append = append;
+exports.concat = concat;
+exports.sub = sub;
+exports.copy = copy;
+exports.fill = fill;
+exports.blit = blit;
+exports.to_list = to_list;
+exports.of_list = of_list;
+exports.iter = iter;
+exports.map = map;
+exports.iteri = iteri;
+exports.mapi = mapi;
+exports.fold_left = fold_left;
+exports.fold_right = fold_right;
+exports.sort = sort;
+exports.stable_sort = stable_sort;
+exports.fast_sort = fast_sort;
+/* No side effect */
+
+/***/ }),
+
 /***/ "./node_modules/bs-platform/lib/js/caml_array.js":
 /*!*******************************************************!*\
   !*** ./node_modules/bs-platform/lib/js/caml_array.js ***!
@@ -292,6 +706,59 @@ exports.sys_blocked_io = sys_blocked_io;
 exports.assert_failure = assert_failure;
 exports.undefined_recursive_module = undefined_recursive_module;
 /*  Not a pure module */
+
+/***/ }),
+
+/***/ "./node_modules/bs-platform/lib/js/caml_exceptions.js":
+/*!************************************************************!*\
+  !*** ./node_modules/bs-platform/lib/js/caml_exceptions.js ***!
+  \************************************************************/
+/*! no static exports found */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+
+var id = /* record */[/* contents */0];
+
+function caml_set_oo_id(b) {
+  b[1] = id[0];
+  id[0] += 1;
+  return b;
+}
+
+function get_id() {
+  id[0] += 1;
+  return id[0];
+}
+
+function create(str) {
+  var v_001 = get_id( /* () */0);
+  var v = /* tuple */[str, v_001];
+  v.tag = 248;
+  return v;
+}
+
+function isCamlExceptionOrOpenVariant(e) {
+  if (e === undefined) {
+    return false;
+  } else if (e.tag === 248) {
+    return true;
+  } else {
+    var slot = e[0];
+    if (slot !== undefined) {
+      return slot.tag === 248;
+    } else {
+      return false;
+    }
+  }
+}
+
+exports.caml_set_oo_id = caml_set_oo_id;
+exports.get_id = get_id;
+exports.create = create;
+exports.isCamlExceptionOrOpenVariant = isCamlExceptionOrOpenVariant;
+/* No side effect */
 
 /***/ }),
 
@@ -788,6 +1255,69 @@ exports.__7 = __7;
 exports.curry_8 = curry_8;
 exports._8 = _8;
 exports.__8 = __8;
+/* No side effect */
+
+/***/ }),
+
+/***/ "./node_modules/bs-platform/lib/js/js_exn.js":
+/*!***************************************************!*\
+  !*** ./node_modules/bs-platform/lib/js/js_exn.js ***!
+  \***************************************************/
+/*! no static exports found */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+
+var Caml_exceptions = __webpack_require__(/*! ./caml_exceptions.js */ "./node_modules/bs-platform/lib/js/caml_exceptions.js");
+
+var $$Error = Caml_exceptions.create("Js_exn.Error");
+
+function internalToOCamlException(e) {
+  if (Caml_exceptions.isCamlExceptionOrOpenVariant(e)) {
+    return e;
+  } else {
+    return [$$Error, e];
+  }
+}
+
+function raiseError(str) {
+  throw new Error(str);
+}
+
+function raiseEvalError(str) {
+  throw new EvalError(str);
+}
+
+function raiseRangeError(str) {
+  throw new RangeError(str);
+}
+
+function raiseReferenceError(str) {
+  throw new ReferenceError(str);
+}
+
+function raiseSyntaxError(str) {
+  throw new SyntaxError(str);
+}
+
+function raiseTypeError(str) {
+  throw new TypeError(str);
+}
+
+function raiseUriError(str) {
+  throw new URIError(str);
+}
+
+exports.$$Error = $$Error;
+exports.internalToOCamlException = internalToOCamlException;
+exports.raiseError = raiseError;
+exports.raiseEvalError = raiseEvalError;
+exports.raiseRangeError = raiseRangeError;
+exports.raiseReferenceError = raiseReferenceError;
+exports.raiseSyntaxError = raiseSyntaxError;
+exports.raiseTypeError = raiseTypeError;
+exports.raiseUriError = raiseUriError;
 /* No side effect */
 
 /***/ }),
@@ -7914,18 +8444,28 @@ var App = function (_Component) {
 
     var _this = _possibleConstructorReturn(this, (App.__proto__ || Object.getPrototypeOf(App)).call(this, props));
 
-    _this.state = {};
+    _this.state = {
+      allTabs: []
+    };
+    _this.sendTabsForExport = _this.sendTabsForExport.bind(_this);
     return _this;
   }
 
   _createClass(App, [{
+    key: "sendTabsForExport",
+    value: function sendTabsForExport(tabs) {
+      if (tabs.length > 0) {
+        this.setState({ allTabs: tabs });
+      }
+    }
+  }, {
     key: "render",
     value: function render() {
       return _react2.default.createElement(
         _react.Fragment,
         null,
-        _react2.default.createElement(Reason, { message: "hello from reason react" }),
-        _react2.default.createElement(_ListContainer2.default, null)
+        _react2.default.createElement(Reason, { foobar: this.state.allTabs, message: "hello from reason react" }),
+        _react2.default.createElement(_ListContainer2.default, { sendTabs: this.sendTabsForExport })
       );
     }
   }]);
@@ -7983,6 +8523,7 @@ var ListContainer = function (_Component) {
     _this.getCurrentBrowserTabs = _this.getCurrentBrowserTabs.bind(_this);
     _this.saveTabs = _this.saveTabs.bind(_this);
     _this.getPinnedTabs = _this.getPinnedTabs.bind(_this);
+    _this.deleteTabs = _this.deleteTabs.bind(_this);
     return _this;
   }
 
@@ -8025,8 +8566,8 @@ var ListContainer = function (_Component) {
             tabsArray.push(url);
           }
         }
-        var noTabs = _this3.state.allTabs !== undefined || _this3.state.allTabs !== null ? true : false;
-        if (noTabs) {
+        var noTabs = _this3.state.allTabs === undefined || _this3.state.allTabs === null ? true : false;
+        if (!noTabs) {
           var arrayCopy = _this3.state.allTabs.slice();
           arrayCopy = arrayCopy.concat(tabsArray);
           _this3.setState({ allTabs: arrayCopy });
@@ -8058,8 +8599,8 @@ var ListContainer = function (_Component) {
             }
           }
         }
-        var noTabs = _this4.state.allTabs !== undefined || _this4.state.allTabs !== null ? true : false;
-        if (noTabs) {
+        var noTabs = _this4.state.allTabs === undefined || _this4.state.allTabs === null ? true : false;
+        if (!noTabs) {
           var arrayCopy = _this4.state.allTabs.slice();
           arrayCopy = arrayCopy.concat(tabsArray);
           _this4.setState({ allTabs: arrayCopy });
@@ -8075,6 +8616,16 @@ var ListContainer = function (_Component) {
       var tabsObj = { "tabs": this.state.allTabs };
       chrome.storage.sync.set(tabsObj, function (result) {
         console.log("tabs have been saved");
+      });
+      this.props.sendTabs(this.state.allTabs);
+    }
+  }, {
+    key: "deleteTabs",
+    value: function deleteTabs() {
+      var _this5 = this;
+
+      this.setState({ allTabs: [] }, function () {
+        _this5.saveTabs();
       });
     }
   }, {
@@ -8093,8 +8644,9 @@ var ListContainer = function (_Component) {
       } else {
         var greaterThanZero = this.state.allTabs.length > 0 ? true : false;
         if (greaterThanZero) {
-          data = this.state.allTabs.map(function (el, index) {
-            return _react2.default.createElement(_ListItem2.default, { url: el });
+          data = this.state.allTabs.map(function (urlObj, index) {
+            var url = urlObj.url;
+            return _react2.default.createElement(_ListItem2.default, { url: url });
           });
         }
         return _react2.default.createElement(
@@ -8107,7 +8659,7 @@ var ListContainer = function (_Component) {
   }, {
     key: "render",
     value: function render() {
-      var _this5 = this;
+      var _this6 = this;
 
       return _react2.default.createElement(
         _react2.default.Fragment,
@@ -8115,14 +8667,14 @@ var ListContainer = function (_Component) {
         _react2.default.createElement(
           "button",
           { onClick: function onClick() {
-              return _this5.setState({ allTabs: [] });
+              return _this6.deleteTabs();
             } },
           "delete all tabs"
         ),
         _react2.default.createElement(
           "button",
           { onClick: function onClick() {
-              return _this5.getPinnedTabs();
+              return _this6.getPinnedTabs();
             } },
           "get pinned tabs"
         ),
@@ -8213,12 +8765,18 @@ exports.default = ListItem;
 // Generated by BUCKLESCRIPT VERSION 4.0.1, PLEASE EDIT WITH CARE
 
 
+var $$Array = __webpack_require__(/*! bs-platform/lib/js/array.js */ "./node_modules/bs-platform/lib/js/array.js");
+var Curry = __webpack_require__(/*! bs-platform/lib/js/curry.js */ "./node_modules/bs-platform/lib/js/curry.js");
 var React = __webpack_require__(/*! react */ "./node_modules/react/index.js");
 var ReasonReact = __webpack_require__(/*! reason-react/src/ReasonReact.js */ "./node_modules/reason-react/src/ReasonReact.js");
 
-var component = ReasonReact.statelessComponent("Reason");
+function str(prim) {
+  return prim;
+}
 
-function make(message, _) {
+var component = ReasonReact.reducerComponent("Reason");
+
+function make(message, foobar, _) {
   return (/* record */[
     /* debugName */component[/* debugName */0],
     /* reactClassInternal */component[/* reactClassInternal */1],
@@ -8229,21 +8787,38 @@ function make(message, _) {
     /* willUnmount */component[/* willUnmount */6],
     /* willUpdate */component[/* willUpdate */7],
     /* shouldUpdate */component[/* shouldUpdate */8],
-    /* render */function () {
-      return React.createElement("p", undefined, message);
+    /* render */function (_self) {
+      return React.createElement("div", {
+        className: "reasonList"
+      }, $$Array.map(function (url) {
+        return React.createElement("p", undefined, url);
+      }, foobar), React.createElement("button", {
+        onClick: function onClick() {
+          return Curry._1(_self[/* send */3], /* ExportTabs */0);
+        }
+      }, message));
     },
-    /* initialState */component[/* initialState */10],
+    /* initialState */function () {
+      return (/* record */[/* tabs */foobar]
+      );
+    },
     /* retainedProps */component[/* retainedProps */11],
-    /* reducer */component[/* reducer */12],
+    /* reducer */function (_, _$1) {
+      console.log("im an export function");
+      console.log(foobar);
+      return (/* NoUpdate */0
+      );
+    },
     /* subscriptions */component[/* subscriptions */13],
     /* jsElementWrapped */component[/* jsElementWrapped */14]]
   );
 }
 
 var jsComponent = ReasonReact.wrapReasonForJs(component, function (jsProps) {
-  return make(jsProps.message, /* array */[]);
+  return make(jsProps.message, jsProps.foobar, /* array */[]);
 });
 
+exports.str = str;
 exports.component = component;
 exports.make = make;
 exports.jsComponent = jsComponent;

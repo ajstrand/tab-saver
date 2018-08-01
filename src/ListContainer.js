@@ -10,6 +10,7 @@ class ListContainer extends Component {
     this.getCurrentBrowserTabs = this.getCurrentBrowserTabs.bind(this);
     this.saveTabs = this.saveTabs.bind(this);
     this.getPinnedTabs = this.getPinnedTabs.bind(this);
+    this.deleteTabs = this.deleteTabs.bind(this);
   }
   componentDidMount () {
     let keyToGrab = "tabs";
@@ -45,8 +46,8 @@ class ListContainer extends Component {
           tabsArray.push(url)
         }
       }
-      let noTabs = this.state.allTabs !== undefined || this.state.allTabs !== null ? true : false;
-      if(noTabs){
+      let noTabs = this.state.allTabs === undefined || this.state.allTabs === null ? true : false;
+      if(!noTabs){
         let arrayCopy = this.state.allTabs.slice();
         arrayCopy = arrayCopy.concat(tabsArray);
         this.setState({allTabs: arrayCopy});
@@ -75,8 +76,8 @@ class ListContainer extends Component {
           }
         }
       }
-      let noTabs = this.state.allTabs !== undefined || this.state.allTabs !== null ? true : false;
-      if(noTabs){
+      let noTabs = this.state.allTabs === undefined || this.state.allTabs === null ? true : false;
+      if(!noTabs){
         let arrayCopy = this.state.allTabs.slice();
         arrayCopy = arrayCopy.concat(tabsArray);
         this.setState({allTabs: arrayCopy});
@@ -92,6 +93,12 @@ class ListContainer extends Component {
     chrome.storage.sync.set(tabsObj, (result) => {
       console.log("tabs have been saved");
     })
+    this.props.sendTabs(this.state.allTabs);
+  }
+  deleteTabs () {
+    this.setState({allTabs:[]}, () => {
+      this.saveTabs();
+    });
   }
   renderList () {
     let data =  null;
@@ -107,8 +114,9 @@ class ListContainer extends Component {
     else {
       let greaterThanZero = this.state.allTabs.length > 0 ? true : false;
       if(greaterThanZero){
-        data = this.state.allTabs.map(function(el, index){
-          return (<ListItem url={el}></ListItem>)
+        data = this.state.allTabs.map(function(urlObj, index){
+          let url = urlObj.url;
+          return (<ListItem url={url}></ListItem>)
         })
       }
       return (
@@ -121,7 +129,7 @@ class ListContainer extends Component {
   render (){
     return (
       <React.Fragment>
-        <button onClick={() => this.setState({allTabs:[]})}>delete all tabs</button>
+        <button onClick={() => this.deleteTabs()}>delete all tabs</button>
         <button onClick={() => this.getPinnedTabs()}>get pinned tabs</button>
     {this.renderList()}
     </React.Fragment>

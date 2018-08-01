@@ -1,12 +1,46 @@
 /* ReasonReact used by ReactJS */
-/* This is just a normal stateless component. The only change you need to turn
+/* The only change you need to turn
    it into a ReactJS-compatible component is the wrapReasonForJs call below */
-   let component = ReasonReact.statelessComponent("Reason");
 
-   let make = (~message, _children) => {
+   /* State declaration */
+type state = {
+  tabs:array(string)
+}
+
+/* Action declaration */
+type action =
+  | ExportTabs;
+
+let str = ReasonReact.string;
+
+   let component = ReasonReact.reducerComponent("Reason");
+
+   let make = (~message, ~foobar, _children) => {
+    
      ...component,
+     initialState: () => {tabs:foobar},
+     
+  /* State transitions */
+  reducer: (action, state) =>
+    switch (action) {
+    | ExportTabs => {
+      Js.log("im an export function");
+      Js.log(foobar);
+      ReasonReact.NoUpdate;
+    }
+    },
+
      render: _self => {
-         <p> {ReasonReact.string(message)} </p>;
+       <div className="reasonList">
+       (ReasonReact.array(
+        Array.map(
+          (url) =>
+            <p>{str(url)}</p>,
+            foobar
+         ) 
+      ))
+      <button onClick={_e => _self.send(ExportTabs)}> {str(message)} </button>
+      </div>   
      },
    };
    
@@ -14,7 +48,8 @@
       require('greetingRe.js').jsComponent */
    [@bs.deriving abstract]
    type jsProps = {
-     message: string
+     message: string,
+     foobar:array(string)
    };
 
    /* if **you know what you're doing** and have
@@ -23,6 +58,7 @@
 let jsComponent =
 ReasonReact.wrapReasonForJs(~component, jsProps =>
   make(
-    ~message=jsProps |. messageGet,[||]
+    ~message=jsProps |. messageGet,
+    ~foobar=jsProps |. foobarGet,[||]
   )
 );

@@ -6,9 +6,9 @@
   "author": "alex strand",
   "license": "MIT",
   "scripts": {
-    "start": "bsb -make-world -w",
-    "build-prod": "cross-env NODE_ENV=production webpack --config webpack.prod.config.js",
-    "build-dev": "cross-env NODE_ENV=production webpack --config webpack.dev.config.js"
+    "build-reason": "bsb -make-world -w",
+    "prod": "cross-env NODE_ENV=production webpack --config webpack.prod.config.js",
+    "dev": "cross-env NODE_ENV=production webpack --config webpack.dev.config.js"
   },
   "dependencies": {
     "babel-core": "^6.26.0",
