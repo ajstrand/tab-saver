@@ -4,7 +4,7 @@
 
    /* State declaration */
 type state = {
-  tabs:array(string)
+  instructions:string
 }
 
 /* Action declaration */
@@ -13,34 +13,36 @@ type action =
 
 let str = ReasonReact.string;
 
-   let component = ReasonReact.reducerComponent("Reason");
+   let component = ReasonReact.reducerComponent("ExportTabs");
 
-   let make = (~message, ~foobar, _children) => {
+   let make = (~tabsData, _children) => {
     
      ...component,
-     initialState: () => {tabs:foobar},
+     initialState: () => {instructions:"Click here to download your tabs"},
      
   /* State transitions */
   reducer: (action, state) =>
     switch (action) {
     | ExportTabs => {
-      Js.log("im an export function");
-      Js.log(foobar);
+      let downloadTabs: array(string) => int = [%bs.raw {|
+      function (tabsArr) {
+        let jsonData = JSON.stringify(tabsArr)
+        var element = document.createElement("a");
+        var file = new Blob([jsonData], {type: 'application/json'});
+        element.href = URL.createObjectURL(file);
+        element.download = "mySavedTabs.json";
+        element.click();
+      }
+      |}];
+
+      downloadTabs(tabsData) |> ignore;
+      
       ReasonReact.NoUpdate;
     }
     },
 
      render: _self => {
-       <div className="reasonList">
-       (ReasonReact.array(
-        Array.map(
-          (url) =>
-            <p>{str(url)}</p>,
-            foobar
-         ) 
-      ))
-      <button onClick={_e => _self.send(ExportTabs)}> {str(message)} </button>
-      </div>   
+      <button onClick={_e => _self.send(ExportTabs)}> {str(_self.state.instructions)} </button>
      },
    };
    
@@ -48,8 +50,7 @@ let str = ReasonReact.string;
       require('greetingRe.js').jsComponent */
    [@bs.deriving abstract]
    type jsProps = {
-     message: string,
-     foobar:array(string)
+     tabsData:array(string)
    };
 
    /* if **you know what you're doing** and have
@@ -58,7 +59,6 @@ let str = ReasonReact.string;
 let jsComponent =
 ReasonReact.wrapReasonForJs(~component, jsProps =>
   make(
-    ~message=jsProps |. messageGet,
-    ~foobar=jsProps |. foobarGet,[||]
+    ~tabsData=jsProps |. tabsDataGet,[||]
   )
 );

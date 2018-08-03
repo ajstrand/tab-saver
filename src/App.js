@@ -1,6 +1,6 @@
 import React, {Fragment, Component} from "react";
 import ListContainer from "./ListContainer";
-const Reason = require('./Reason.bs').jsComponent
+const ExportTabs = require('./ExportTabs.bs').jsComponent
 class App extends Component {
   constructor(props){
     super(props);
@@ -17,7 +17,7 @@ class App extends Component {
   render (){
     return (
       <Fragment>
-      <Reason foobar={this.state.allTabs} message="hello from reason react"/>
+      <ExportTabs tabsData={this.state.allTabs}/>
       <ListContainer sendTabs={this.sendTabsForExport}></ListContainer>
       </Fragment>
     );

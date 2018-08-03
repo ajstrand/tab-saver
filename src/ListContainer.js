@@ -11,6 +11,7 @@ class ListContainer extends Component {
     this.saveTabs = this.saveTabs.bind(this);
     this.getPinnedTabs = this.getPinnedTabs.bind(this);
     this.deleteTabs = this.deleteTabs.bind(this);
+    this.renderList = this.renderList.bind(this);
   }
   componentDidMount () {
     let keyToGrab = "tabs";
@@ -102,20 +103,16 @@ class ListContainer extends Component {
   }
   renderList () {
     let data =  null;
-    let noTabs = this.state.allTabs === 0 || 
-    this.state.allTabs === null ||
-    this.state.allTabs === undefined
-     ? true : false;
+    let noTabs = this.state.allTabs.length === 0 ? true : false;
     if(noTabs){
       this.saveTabs();
-      let data = (<p>no tabs to show</p>);
+      data = (<p>no tabs to show</p>);
       return data;
     }
     else {
       let greaterThanZero = this.state.allTabs.length > 0 ? true : false;
       if(greaterThanZero){
-        data = this.state.allTabs.map(function(urlObj, index){
-          let url = urlObj.url;
+        data = this.state.allTabs.map(function(url, index){
           return (<ListItem url={url}></ListItem>)
         })
       }
