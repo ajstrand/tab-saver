@@ -8069,6 +8069,7 @@ var ListContainer = function (_Component) {
     _this.getPinnedTabs = _this.getPinnedTabs.bind(_this);
     _this.deleteTabs = _this.deleteTabs.bind(_this);
     _this.renderList = _this.renderList.bind(_this);
+    _this.createTabState = _this.createTabState.bind(_this);
     return _this;
   }
 
@@ -8077,8 +8078,7 @@ var ListContainer = function (_Component) {
     value: function componentDidMount() {
       var _this2 = this;
 
-      var keyToGrab = "tabs";
-      chrome.storage.sync.get(keyToGrab, function (result) {
+      chrome.storage.local.get("tabs", function (result) {
         var resultsUndefined = result === undefined ? true : false;
         if (resultsUndefined) {
           console.error("result from storage is undefined");
@@ -8090,7 +8090,6 @@ var ListContainer = function (_Component) {
             //got tabs from memory
             _this2.setState({ allTabs: result.tabs });
             _this2.getCurrentBrowserTabs();
-            _this2.saveTabs();
           }
         }
       });
@@ -8111,15 +8110,7 @@ var ListContainer = function (_Component) {
             tabsArray.push(url);
           }
         }
-        var noTabs = _this3.state.allTabs === undefined || _this3.state.allTabs === null ? true : false;
-        if (!noTabs) {
-          var arrayCopy = _this3.state.allTabs.slice();
-          arrayCopy = arrayCopy.concat(tabsArray);
-          _this3.setState({ allTabs: arrayCopy });
-        } else {
-          _this3.setState({ allTabs: tabsArray });
-        }
-        _this3.saveTabs();
+        _this3.createTabState(tabsArray);
       });
     }
   }, {
@@ -8143,23 +8134,29 @@ var ListContainer = function (_Component) {
               chrome.tabs.remove(tabId);
             }
           }
+          _this4.createTabState(tabsArray);
         }
-        var noTabs = _this4.state.allTabs === undefined || _this4.state.allTabs === null ? true : false;
-        if (!noTabs) {
-          var arrayCopy = _this4.state.allTabs.slice();
-          arrayCopy = arrayCopy.concat(tabsArray);
-          _this4.setState({ allTabs: arrayCopy });
-        } else {
-          _this4.setState({ allTabs: tabsArray });
-        }
-        _this4.saveTabs();
+      });
+    }
+  }, {
+    key: "createTabState",
+    value: function createTabState(tabsArray) {
+      var _this5 = this;
+
+      var noTabs = this.state.allTabs === 0 ? true : false;
+      if (!noTabs) {
+        var arrayCopy = this.state.allTabs.slice();
+        tabsArray = arrayCopy.concat(tabsArray);
+      }
+      this.setState({ allTabs: tabsArray }, function () {
+        var tabsGreaterThanZero = _this5.state.allTabs.length > 0 ? true : false;
+        tabsGreaterThanZero ? _this5.saveTabs() : false;
       });
     }
   }, {
     key: "saveTabs",
     value: function saveTabs() {
-      var tabsObj = { "tabs": this.state.allTabs };
-      chrome.storage.sync.set(tabsObj, function (result) {
+      chrome.storage.local.set({ "tabs": this.state.allTabs }, function () {
         console.log("tabs have been saved");
       });
       this.props.sendTabs(this.state.allTabs);
@@ -8167,10 +8164,10 @@ var ListContainer = function (_Component) {
   }, {
     key: "deleteTabs",
     value: function deleteTabs() {
-      var _this5 = this;
-
       this.setState({ allTabs: [] }, function () {
-        _this5.saveTabs();
+        chrome.storage.local.remove("tabs", function () {
+          console.log("tabs have been deleted");
+        });
       });
     }
   }, {
@@ -8179,7 +8176,6 @@ var ListContainer = function (_Component) {
       var data = null;
       var noTabs = this.state.allTabs.length === 0 ? true : false;
       if (noTabs) {
-        this.saveTabs();
         data = _react2.default.createElement(
           "p",
           null,

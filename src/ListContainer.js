@@ -12,10 +12,10 @@ class ListContainer extends Component {
     this.getPinnedTabs = this.getPinnedTabs.bind(this);
     this.deleteTabs = this.deleteTabs.bind(this);
     this.renderList = this.renderList.bind(this);
+    this.createTabState = this.createTabState.bind(this);
   }
   componentDidMount () {
-    let keyToGrab = "tabs";
-    chrome.storage.sync.get(keyToGrab, (result) => {
+    chrome.storage.local.get("tabs", (result) => {
       let resultsUndefined = result === undefined ? true : false;
       if(resultsUndefined){
         console.error("result from storage is undefined");
@@ -29,7 +29,6 @@ class ListContainer extends Component {
           //got tabs from memory
           this.setState({allTabs:result.tabs});
           this.getCurrentBrowserTabs();
-          this.saveTabs();
         }
       }
       
@@ -47,16 +46,7 @@ class ListContainer extends Component {
           tabsArray.push(url)
         }
       }
-      let noTabs = this.state.allTabs === undefined || this.state.allTabs === null ? true : false;
-      if(!noTabs){
-        let arrayCopy = this.state.allTabs.slice();
-        arrayCopy = arrayCopy.concat(tabsArray);
-        this.setState({allTabs: arrayCopy});
-      }
-      else {
-        this.setState({allTabs: tabsArray});
-      }
-      this.saveTabs();
+      this.createTabState(tabsArray)
     });
   }
   getCurrentBrowserTabs (){
@@ -76,36 +66,39 @@ class ListContainer extends Component {
             chrome.tabs.remove(tabId);
           }
         }
+        this.createTabState(tabsArray)
       }
-      let noTabs = this.state.allTabs === undefined || this.state.allTabs === null ? true : false;
-      if(!noTabs){
-        let arrayCopy = this.state.allTabs.slice();
-        arrayCopy = arrayCopy.concat(tabsArray);
-        this.setState({allTabs: arrayCopy});
-      }
-      else {
-        this.setState({allTabs: tabsArray});
-      }
-      this.saveTabs();
+      
     });
   }
+  createTabState (tabsArray) {
+    let noTabs = this.state.allTabs === 0 ? true : false;
+      if(!noTabs){
+        let arrayCopy = this.state.allTabs.slice();
+        tabsArray = arrayCopy.concat(tabsArray);     
+      }
+      this.setState({allTabs: tabsArray}, () => {
+        let tabsGreaterThanZero = this.state.allTabs.length > 0 ? true : false;
+        tabsGreaterThanZero ? this.saveTabs() : false;
+      }); 
+  }
   saveTabs () {
-    let tabsObj = {"tabs":this.state.allTabs};
-    chrome.storage.sync.set(tabsObj, (result) => {
+    chrome.storage.local.set({"tabs":this.state.allTabs}, () => {
       console.log("tabs have been saved");
     })
     this.props.sendTabs(this.state.allTabs);
   }
   deleteTabs () {
     this.setState({allTabs:[]}, () => {
-      this.saveTabs();
+      chrome.storage.local.remove("tabs", () => {
+        console.log("tabs have been deleted");
+      })
     });
   }
   renderList () {
     let data =  null;
     let noTabs = this.state.allTabs.length === 0 ? true : false;
     if(noTabs){
-      this.saveTabs();
       data = (<p>no tabs to show</p>);
       return data;
     }
