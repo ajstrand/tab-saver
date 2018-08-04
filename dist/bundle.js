@@ -8062,7 +8062,8 @@ var ListContainer = function (_Component) {
     var _this = _possibleConstructorReturn(this, (ListContainer.__proto__ || Object.getPrototypeOf(ListContainer)).call(this, props));
 
     _this.state = {
-      allTabs: []
+      allTabs: [],
+      tabsWithIds: []
     };
     _this.getCurrentBrowserTabs = _this.getCurrentBrowserTabs.bind(_this);
     _this.saveTabs = _this.saveTabs.bind(_this);
@@ -8100,17 +8101,24 @@ var ListContainer = function (_Component) {
       var _this3 = this;
 
       chrome.tabs.query({}, function (tabs) {
+        var tabsWithIds = [];
         var tabsArray = [];
         for (var i = 0; i < tabs.length; i++) {
           var localTab = tabs[i];
           var url = localTab.url;
+          var tabId = localTab.id;
           var isPinned = localTab.pinned ? true : false;
           var hasStuff = _this3.state.allTabs.includes(url) ? true : false;
           if (!hasStuff && isPinned) {
+            var obj = {
+              url: url,
+              tabId: tabId
+            };
+            tabsWithIds.push(obj);
             tabsArray.push(url);
           }
         }
-        _this3.createTabState(tabsArray);
+        _this3.createTabState(tabsArray, tabsWithIds);
       });
     }
   }, {
@@ -8120,6 +8128,7 @@ var ListContainer = function (_Component) {
 
       var extensionPage = 'chrome://newtab/';
       chrome.tabs.query({}, function (tabs) {
+        var tabsWithIds = [];
         var tabsArray = [];
         for (var i = 0; i < tabs.length; i++) {
           var localTab = tabs[i];
@@ -8130,17 +8139,22 @@ var ListContainer = function (_Component) {
           if (!listHasURL && !isPinned) {
             var isNotExtensionPage = url !== extensionPage ? true : false;
             if (isNotExtensionPage) {
+              var obj = {
+                url: url,
+                tabId: tabId
+              };
+              tabsWithIds.push(obj);
               tabsArray.push(url);
               chrome.tabs.remove(tabId);
             }
           }
-          _this4.createTabState(tabsArray);
+          _this4.createTabState(tabsArray, tabsWithIds);
         }
       });
     }
   }, {
     key: "createTabState",
-    value: function createTabState(tabsArray) {
+    value: function createTabState(tabsArray, tabsWithIds) {
       var _this5 = this;
 
       var noTabs = this.state.allTabs === 0 ? true : false;
@@ -8148,7 +8162,7 @@ var ListContainer = function (_Component) {
         var arrayCopy = this.state.allTabs.slice();
         tabsArray = arrayCopy.concat(tabsArray);
       }
-      this.setState({ allTabs: tabsArray }, function () {
+      this.setState({ allTabs: tabsArray, tabsWithIds: tabsWithIds }, function () {
         var tabsGreaterThanZero = _this5.state.allTabs.length > 0 ? true : false;
         tabsGreaterThanZero ? _this5.saveTabs() : false;
       });
@@ -8164,7 +8178,7 @@ var ListContainer = function (_Component) {
   }, {
     key: "deleteTabs",
     value: function deleteTabs() {
-      this.setState({ allTabs: [] }, function () {
+      this.setState({ allTabs: [], tabsWithIds: [] }, function () {
         chrome.storage.local.remove("tabs", function () {
           console.log("tabs have been deleted");
         });
@@ -8174,7 +8188,7 @@ var ListContainer = function (_Component) {
     key: "renderList",
     value: function renderList() {
       var data = null;
-      var noTabs = this.state.allTabs.length === 0 ? true : false;
+      var noTabs = this.state.tabsWithIds.length === 0 ? true : false;
       if (noTabs) {
         data = _react2.default.createElement(
           "p",
@@ -8183,10 +8197,12 @@ var ListContainer = function (_Component) {
         );
         return data;
       } else {
-        var greaterThanZero = this.state.allTabs.length > 0 ? true : false;
+        var greaterThanZero = this.state.tabsWithIds.length > 0 ? true : false;
         if (greaterThanZero) {
-          data = this.state.allTabs.map(function (url, index) {
-            return _react2.default.createElement(_ListItem2.default, { url: url });
+          data = this.state.tabsWithIds.map(function (urlObj, index) {
+            var url = urlObj.url;
+            var id = urlObj.tabId;
+            return _react2.default.createElement(_ListItem2.default, { id: id, url: url });
           });
         }
         return _react2.default.createElement(
@@ -8267,23 +8283,63 @@ var ListItem = function (_Component) {
     var _this = _possibleConstructorReturn(this, (ListItem.__proto__ || Object.getPrototypeOf(ListItem)).call(this, props));
 
     _this.state = {
-      url: props.url
+      url: props.url,
+      id: props.id
     };
+    _this.deleteTab = _this.deleteTab.bind(_this);
     return _this;
   }
 
   _createClass(ListItem, [{
+    key: "deleteTab",
+    value: function deleteTab() {
+      var _this2 = this;
+
+      var stateCopy = this.state;
+      var stringId = stateCopy.id.toString();
+      chrome.storage.local.remove(stringId, function () {
+        console.log("tab has been deleted");
+        _this2.setState({ url: null });
+      });
+    }
+  }, {
+    key: "renderTab",
+    value: function renderTab() {
+      var _this3 = this;
+
+      if (this.state.url !== null) {
+        return _react2.default.createElement(
+          _react2.default.Fragment,
+          null,
+          _react2.default.createElement(
+            "button",
+            { onClick: function onClick() {
+                return _this3.deleteTab();
+              } },
+            "Delete tab"
+          ),
+          _react2.default.createElement(
+            "a",
+            { href: this.state.url },
+            _react2.default.createElement(
+              "span",
+              null,
+              _react2.default.createElement(
+                "li",
+                null,
+                this.state.url
+              )
+            )
+          )
+        );
+      } else {
+        return null;
+      }
+    }
+  }, {
     key: "render",
     value: function render() {
-      return _react2.default.createElement(
-        "a",
-        { href: this.state.url },
-        _react2.default.createElement(
-          "li",
-          null,
-          this.state.url
-        )
-      );
+      return this.renderTab();
     }
   }]);
 
