@@ -20,13 +20,10 @@ class ListItem extends Component {
     if(this.state.url !== null){
       return (
         <React.Fragment>
-        <button onClick={() => this.deleteTab()}>Delete tab</button>
-        <a href={this.state.url}>
-        <span>
-          <li>{this.state.url}
-          </li>
-          </span>
-          </a>
+        <div className="row">
+        <button className="deleteTab" onClick={() => this.deleteTab()}>Delete tab</button>
+        <a href={this.state.url}><li>{this.state.url}</li></a>
+        </div>
           </React.Fragment>
       )
     }

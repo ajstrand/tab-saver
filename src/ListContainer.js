@@ -1,6 +1,6 @@
 import React, {Component} from "react";
 import ListItem from "./ListItem";
-
+const ExportTabs = require('./ExportTabs.bs').jsComponent;
 class ListContainer extends Component {
   constructor(props){
     super(props);
@@ -100,7 +100,6 @@ class ListContainer extends Component {
     chrome.storage.local.set({"tabs":this.state.allTabs}, () => {
       console.log("tabs have been saved");
     })
-    this.props.sendTabs(this.state.allTabs);
   }
   deleteTabs () {
     this.setState({allTabs:[], tabsWithIds:[]}, () => {
@@ -135,8 +134,11 @@ class ListContainer extends Component {
   render (){
     return (
       <React.Fragment>
-        <button onClick={() => this.deleteTabs()}>delete all tabs</button>
-        <button onClick={() => this.getPinnedTabs()}>get pinned tabs</button>
+        <div className="buttonGrp">
+          <ExportTabs tabsData={this.state.allTabs}/>
+          <button onClick={() => this.deleteTabs()}>delete all tabs</button>
+          <button onClick={() => this.getPinnedTabs()}>get pinned tabs</button>
+        </div>
     {this.renderList()}
     </React.Fragment>
     );
