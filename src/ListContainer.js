@@ -121,7 +121,7 @@ class ListContainer extends Component {
         data = this.state.tabsWithIds.map(function(urlObj, index){
           let url = urlObj.url;
           let id = urlObj.tabId;
-          return (<ListItem id={id} url={url}></ListItem>)
+          return (<ListItem key={id} id={id} url={url}></ListItem>)
         })
       }
       return (

@@ -8687,7 +8687,7 @@ var ListContainer = function (_Component) {
           data = this.state.tabsWithIds.map(function (urlObj, index) {
             var url = urlObj.url;
             var id = urlObj.tabId;
-            return _react2.default.createElement(_ListItem2.default, { id: id, url: url });
+            return _react2.default.createElement(_ListItem2.default, { key: id, id: id, url: url });
           });
         }
         return _react2.default.createElement(
