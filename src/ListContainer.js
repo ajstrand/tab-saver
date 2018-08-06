@@ -1,11 +1,12 @@
 import React, {Component} from "react";
 import ListItem from "./ListItem";
-
+const ExportTabs = require('./ExportTabs.bs').jsComponent;
 class ListContainer extends Component {
   constructor(props){
     super(props);
     this.state = {
-      allTabs:[]
+      allTabs:[],
+      tabsWithIds:[]
     };
     this.getCurrentBrowserTabs = this.getCurrentBrowserTabs.bind(this);
     this.saveTabs = this.saveTabs.bind(this);
@@ -36,22 +37,30 @@ class ListContainer extends Component {
   }
   getPinnedTabs () {
     chrome.tabs.query({},  (tabs) => {
+      let tabsWithIds = [];
       let tabsArray = [];
       for (var i = 0; i < tabs.length; i++) {
         var localTab = tabs[i];
         var url = localTab.url;
+        let tabId = localTab.id;
         var isPinned = localTab.pinned ? true : false;
         var  hasStuff = this.state.allTabs.includes(url) ? true : false;
         if(!hasStuff && isPinned) {
+          let obj = {
+            url:url,
+            tabId:tabId
+          }
+          tabsWithIds.push(obj)
           tabsArray.push(url)
         }
       }
-      this.createTabState(tabsArray)
+      this.createTabState(tabsArray, tabsWithIds)
     });
   }
   getCurrentBrowserTabs (){
     const extensionPage = 'chrome://newtab/';
     chrome.tabs.query({},  (tabs) => {
+      let tabsWithIds = [];
       let tabsArray = [];
       for (let i = 0; i < tabs.length; i++) {
         const localTab = tabs[i];
@@ -62,22 +71,27 @@ class ListContainer extends Component {
         if(!listHasURL && !isPinned) {
           let isNotExtensionPage = url !== extensionPage ? true : false;
           if(isNotExtensionPage){
+            let obj = {
+              url:url,
+              tabId:tabId
+            }
+            tabsWithIds.push(obj)
             tabsArray.push(url)
             chrome.tabs.remove(tabId);
           }
         }
-        this.createTabState(tabsArray)
+        this.createTabState(tabsArray, tabsWithIds)
       }
       
     });
   }
-  createTabState (tabsArray) {
+  createTabState (tabsArray, tabsWithIds) {
     let noTabs = this.state.allTabs === 0 ? true : false;
       if(!noTabs){
         let arrayCopy = this.state.allTabs.slice();
         tabsArray = arrayCopy.concat(tabsArray);     
       }
-      this.setState({allTabs: tabsArray}, () => {
+      this.setState({allTabs: tabsArray, tabsWithIds: tabsWithIds}, () => {
         let tabsGreaterThanZero = this.state.allTabs.length > 0 ? true : false;
         tabsGreaterThanZero ? this.saveTabs() : false;
       }); 
@@ -86,10 +100,9 @@ class ListContainer extends Component {
     chrome.storage.local.set({"tabs":this.state.allTabs}, () => {
       console.log("tabs have been saved");
     })
-    this.props.sendTabs(this.state.allTabs);
   }
   deleteTabs () {
-    this.setState({allTabs:[]}, () => {
+    this.setState({allTabs:[], tabsWithIds:[]}, () => {
       chrome.storage.local.remove("tabs", () => {
         console.log("tabs have been deleted");
       })
@@ -97,16 +110,18 @@ class ListContainer extends Component {
   }
   renderList () {
     let data =  null;
-    let noTabs = this.state.allTabs.length === 0 ? true : false;
+    let noTabs = this.state.tabsWithIds.length === 0 ? true : false;
     if(noTabs){
       data = (<p>no tabs to show</p>);
       return data;
     }
     else {
-      let greaterThanZero = this.state.allTabs.length > 0 ? true : false;
+      let greaterThanZero = this.state.tabsWithIds.length > 0 ? true : false;
       if(greaterThanZero){
-        data = this.state.allTabs.map(function(url, index){
-          return (<ListItem url={url}></ListItem>)
+        data = this.state.tabsWithIds.map(function(urlObj, index){
+          let url = urlObj.url;
+          let id = urlObj.tabId;
+          return (<ListItem key={id} id={id} url={url}></ListItem>)
         })
       }
       return (
@@ -119,8 +134,11 @@ class ListContainer extends Component {
   render (){
     return (
       <React.Fragment>
-        <button onClick={() => this.deleteTabs()}>delete all tabs</button>
-        <button onClick={() => this.getPinnedTabs()}>get pinned tabs</button>
+        <div className="buttonGrp">
+          <ExportTabs tabsData={this.state.allTabs}/>
+          <button onClick={() => this.deleteTabs()}>delete all tabs</button>
+          <button onClick={() => this.getPinnedTabs()}>get pinned tabs</button>
+        </div>
     {this.renderList()}
     </React.Fragment>
     );

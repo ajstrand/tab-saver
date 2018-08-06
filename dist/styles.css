@@ -1,0 +1,72 @@
+body {
+  left: 300px;
+  top: 500px;
+  width: 100%;
+  height: 100%;
+  background-color: #F4EBE8;
+  display: -webkit-box;
+  display: -ms-flexbox;
+  display: flex;
+  -webkit-box-orient: horizontal;
+  -webkit-box-direction: normal;
+  -ms-flex-direction: row;
+  flex-direction: row;
+  -webkit-box-pack: center;
+  -ms-flex-pack: center;
+  justify-content: center;
+  -webkit-box-align: center;
+  -ms-flex-align: center;
+  align-items: center; }
+
+p {
+  color: #3993DD;
+  font-size: 25px; }
+
+.buttonGrp {
+  display: -webkit-box;
+  display: -ms-flexbox;
+  display: flex;
+  -webkit-box-orient: horizontal;
+  -webkit-box-direction: normal;
+  -ms-flex-direction: row;
+  flex-direction: row;
+  -webkit-box-pack: center;
+  -ms-flex-pack: center;
+  justify-content: center;
+  -webkit-box-align: center;
+  -ms-flex-align: center;
+  align-items: center; }
+  .buttonGrp button {
+    margin: 0 15px 0 15px; }
+
+button {
+  font-size: 25px;
+  cursor: pointer;
+  outline: none;
+  background-color: #F4EBE8;
+  border: 2px solid #3993DD;
+  border-radius: 20px;
+  color: #3993DD;
+  margin: 0 15px 0 15px; }
+
+.deleteTab {
+  width: 7em;
+  height: 2em; }
+
+.row {
+  display: -webkit-box;
+  display: -ms-flexbox;
+  display: flex;
+  -webkit-box-orient: horizontal;
+  -webkit-box-direction: normal;
+  -ms-flex-direction: row;
+  flex-direction: row;
+  margin-bottom: 10px; }
+
+li {
+  font-size: 25px;
+  list-style-type: none;
+  color: #3993DD; }
+
+
+/*# sourceMappingURL=styles.css.map*/
