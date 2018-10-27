@@ -1,6 +1,6 @@
 import "./newtab.scss"
 
-import React, {Fragment, Component} from "react";
+import React, {Component} from "react";
 import ListContainer from "./ListContainer";
 class App extends Component {
   constructor(props){
@@ -8,9 +8,7 @@ class App extends Component {
   }
   render (){
     return (
-      <Fragment>
       <ListContainer></ListContainer>
-      </Fragment>
     );
   }
 }

@@ -8416,11 +8416,7 @@ var App = function (_Component) {
   _createClass(App, [{
     key: "render",
     value: function render() {
-      return _react2.default.createElement(
-        _react.Fragment,
-        null,
-        _react2.default.createElement(_ListContainer2.default, null)
-      );
+      return _react2.default.createElement(_ListContainer2.default, null);
     }
   }]);
 
@@ -8551,6 +8547,7 @@ var ListContainer = function (_Component) {
       allTabs: [],
       tabsWithIds: []
     };
+    _this.searchTabs = _this.searchTabs.bind(_this);
     _this.getCurrentBrowserTabs = _this.getCurrentBrowserTabs.bind(_this);
     _this.saveTabs = _this.saveTabs.bind(_this);
     _this.getPinnedTabs = _this.getPinnedTabs.bind(_this);
@@ -8670,8 +8667,25 @@ var ListContainer = function (_Component) {
       });
     }
   }, {
+    key: "searchTabs",
+    value: function searchTabs(stringId) {
+      if (this.state.tabsWithIds !== null) {
+        var numToRemove = 1;
+        var copy = this.state.tabsWithIds.slice();
+        var indexToRemove = copy.findIndex(function (urlObj, index) {
+          var id = urlObj.tabId;
+          var passCondition = id === parseInt(stringId);
+          return passCondition;
+        });
+        copy.splice(indexToRemove, numToRemove);
+        this.setState({ tabsWithIds: copy });
+      }
+    }
+  }, {
     key: "renderList",
     value: function renderList() {
+      var _this6 = this;
+
       var data = null;
       var noTabs = this.state.tabsWithIds.length === 0 ? true : false;
       if (noTabs) {
@@ -8687,7 +8701,11 @@ var ListContainer = function (_Component) {
           data = this.state.tabsWithIds.map(function (urlObj, index) {
             var url = urlObj.url;
             var id = urlObj.tabId;
-            return _react2.default.createElement(_ListItem2.default, { key: id, id: id, url: url });
+            return _react2.default.createElement(_ListItem2.default, {
+              callback: _this6.searchTabs,
+              key: id,
+              id: id,
+              url: url });
           });
         }
         return _react2.default.createElement(
@@ -8700,7 +8718,7 @@ var ListContainer = function (_Component) {
   }, {
     key: "render",
     value: function render() {
-      var _this6 = this;
+      var _this7 = this;
 
       return _react2.default.createElement(
         _react2.default.Fragment,
@@ -8712,14 +8730,14 @@ var ListContainer = function (_Component) {
           _react2.default.createElement(
             "button",
             { onClick: function onClick() {
-                return _this6.deleteTabs();
+                return _this7.deleteTabs();
               } },
             "delete all tabs"
           ),
           _react2.default.createElement(
             "button",
             { onClick: function onClick() {
-                return _this6.getPinnedTabs();
+                return _this7.getPinnedTabs();
               } },
             "get pinned tabs"
           )
@@ -8789,7 +8807,7 @@ var ListItem = function (_Component) {
       var stringId = stateCopy.id.toString();
       chrome.storage.local.remove(stringId, function () {
         console.log("tab has been deleted");
-        _this2.setState({ url: null });
+        _this2.props.callback(stringId);
       });
     }
   }, {

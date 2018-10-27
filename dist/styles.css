@@ -17,56 +17,50 @@ body {
   -webkit-box-align: center;
   -ms-flex-align: center;
   align-items: center; }
-
-p {
-  color: #3993DD;
-  font-size: 25px; }
-
-.buttonGrp {
-  display: -webkit-box;
-  display: -ms-flexbox;
-  display: flex;
-  -webkit-box-orient: horizontal;
-  -webkit-box-direction: normal;
-  -ms-flex-direction: row;
-  flex-direction: row;
-  -webkit-box-pack: center;
-  -ms-flex-pack: center;
-  justify-content: center;
-  -webkit-box-align: center;
-  -ms-flex-align: center;
-  align-items: center; }
-  .buttonGrp button {
+  body p {
+    color: #3993DD;
+    font-size: 25px; }
+  body .buttonGrp {
+    display: -webkit-box;
+    display: -ms-flexbox;
+    display: flex;
+    -webkit-box-orient: horizontal;
+    -webkit-box-direction: normal;
+    -ms-flex-direction: row;
+    flex-direction: row;
+    -webkit-box-pack: center;
+    -ms-flex-pack: center;
+    justify-content: center;
+    -webkit-box-align: center;
+    -ms-flex-align: center;
+    align-items: center; }
+    body .buttonGrp button {
+      margin: 0 15px 0 15px; }
+  body button {
+    font-size: 25px;
+    cursor: pointer;
+    outline: none;
+    background-color: #F4EBE8;
+    border: 2px solid #3993DD;
+    border-radius: 20px;
+    color: #3993DD;
     margin: 0 15px 0 15px; }
-
-button {
-  font-size: 25px;
-  cursor: pointer;
-  outline: none;
-  background-color: #F4EBE8;
-  border: 2px solid #3993DD;
-  border-radius: 20px;
-  color: #3993DD;
-  margin: 0 15px 0 15px; }
-
-.deleteTab {
-  width: 7em;
-  height: 2em; }
-
-.row {
-  display: -webkit-box;
-  display: -ms-flexbox;
-  display: flex;
-  -webkit-box-orient: horizontal;
-  -webkit-box-direction: normal;
-  -ms-flex-direction: row;
-  flex-direction: row;
-  margin-bottom: 10px; }
-
-li {
-  font-size: 25px;
-  list-style-type: none;
-  color: #3993DD; }
+  body .deleteTab {
+    width: 7em;
+    height: 2em; }
+  body .row {
+    display: -webkit-box;
+    display: -ms-flexbox;
+    display: flex;
+    -webkit-box-orient: horizontal;
+    -webkit-box-direction: normal;
+    -ms-flex-direction: row;
+    flex-direction: row;
+    margin-bottom: 10px; }
+  body li {
+    font-size: 25px;
+    list-style-type: none;
+    color: #3993DD; }
 
 
 /*# sourceMappingURL=styles.css.map*/
