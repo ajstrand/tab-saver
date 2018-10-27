@@ -8,7 +8,7 @@
     "persistent": false
   },
   "chrome_url_overrides" : {
-    "newtab": "./index.html"
+    "newtab": "index.html"
 },
   "manifest_version": 2
 }

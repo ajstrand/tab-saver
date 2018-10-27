@@ -8,6 +8,7 @@ class ListContainer extends Component {
       allTabs:[],
       tabsWithIds:[]
     };
+    this.searchTabs = this.searchTabs.bind(this)
     this.getCurrentBrowserTabs = this.getCurrentBrowserTabs.bind(this);
     this.saveTabs = this.saveTabs.bind(this);
     this.getPinnedTabs = this.getPinnedTabs.bind(this);
@@ -108,6 +109,20 @@ class ListContainer extends Component {
       })
     });
   }
+  searchTabs (stringId) {
+    if(this.state.tabsWithIds !== null){
+      let numToRemove = 1;
+      let copy = this.state.tabsWithIds.slice();
+      let indexToRemove = copy.findIndex((urlObj, index) => {
+        let id = urlObj.tabId;
+        let passCondition = id === parseInt(stringId);
+        return passCondition;
+      })
+      copy.splice(indexToRemove, numToRemove);
+      this.setState({tabsWithIds:copy});
+    }
+    
+  }
   renderList () {
     let data =  null;
     let noTabs = this.state.tabsWithIds.length === 0 ? true : false;
@@ -118,10 +133,15 @@ class ListContainer extends Component {
     else {
       let greaterThanZero = this.state.tabsWithIds.length > 0 ? true : false;
       if(greaterThanZero){
-        data = this.state.tabsWithIds.map(function(urlObj, index){
+        data = this.state.tabsWithIds.map((urlObj, index) => {
           let url = urlObj.url;
           let id = urlObj.tabId;
-          return (<ListItem key={id} id={id} url={url}></ListItem>)
+          return (<ListItem 
+            callback={this.searchTabs} 
+            key={id} 
+            id={id} 
+            url={url}>
+            </ListItem>)
         })
       }
       return (
