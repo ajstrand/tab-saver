@@ -5,7 +5,6 @@ class ListContainer extends Component {
   constructor(props){
     super(props);
     this.state = {
-      allTabs:[],
       tabsWithIds:[]
     };
     this.searchTabs = this.searchTabs.bind(this)
@@ -29,7 +28,7 @@ class ListContainer extends Component {
         }
         else if(result.tabs.length > 0){
           //got tabs from memory
-          this.setState({allTabs:result.tabs});
+          this.setState({tabsWithIds:result.tabs});
           this.getCurrentBrowserTabs();
         }
       }
@@ -39,36 +38,37 @@ class ListContainer extends Component {
   getPinnedTabs () {
     chrome.tabs.query({},  (tabs) => {
       let tabsWithIds = [];
-      let tabsArray = [];
       for (var i = 0; i < tabs.length; i++) {
         var localTab = tabs[i];
         var url = localTab.url;
         let tabId = localTab.id;
         var isPinned = localTab.pinned ? true : false;
-        var  hasStuff = this.state.allTabs.includes(url) ? true : false;
-        if(!hasStuff && isPinned) {
+        let listHasURL = this.state.tabsWithIds.find((localUrl, i) => {
+          return localUrl === url;
+        })        
+        if(!listHasURL && isPinned) {
           let obj = {
             url:url,
             tabId:tabId
           }
           tabsWithIds.push(obj)
-          tabsArray.push(url)
         }
       }
-      this.createTabState(tabsArray, tabsWithIds)
+      this.createTabState(tabsWithIds)
     });
   }
   getCurrentBrowserTabs (){
     const extensionPage = 'chrome://newtab/';
     chrome.tabs.query({},  (tabs) => {
       let tabsWithIds = [];
-      let tabsArray = [];
       for (let i = 0; i < tabs.length; i++) {
         const localTab = tabs[i];
         let url = localTab.url;
         let tabId = localTab.id;
         let isPinned = localTab.pinned ? true : false;
-        let listHasURL = this.state.allTabs.includes(url) ? true : false;
+        let listHasURL = this.state.tabsWithIds.find((localUrl, i) => {
+          return localUrl === url;
+        })
         if(!listHasURL && !isPinned) {
           let isNotExtensionPage = url !== extensionPage ? true : false;
           if(isNotExtensionPage){
@@ -77,33 +77,32 @@ class ListContainer extends Component {
               tabId:tabId
             }
             tabsWithIds.push(obj)
-            tabsArray.push(url)
             chrome.tabs.remove(tabId);
           }
         }
-        this.createTabState(tabsArray, tabsWithIds)
+        this.createTabState(tabsWithIds)
       }
       
     });
   }
-  createTabState (tabsArray, tabsWithIds) {
-    let noTabs = this.state.allTabs === 0 ? true : false;
+  createTabState (tabsWithIds) {
+    let noTabs = this.state.tabsWithIds === 0 ? true : false;
       if(!noTabs){
-        let arrayCopy = this.state.allTabs.slice();
-        tabsArray = arrayCopy.concat(tabsArray);     
+        let arrayCopy = this.state.tabsWithIds.slice();
+        tabsWithIds = arrayCopy.concat(tabsWithIds);     
       }
-      this.setState({allTabs: tabsArray, tabsWithIds: tabsWithIds}, () => {
-        let tabsGreaterThanZero = this.state.allTabs.length > 0 ? true : false;
+      this.setState({tabsWithIds: tabsWithIds}, () => {
+        let tabsGreaterThanZero = this.state.tabsWithIds.length > 0 ? true : false;
         tabsGreaterThanZero ? this.saveTabs() : false;
       }); 
   }
   saveTabs () {
-    chrome.storage.local.set({"tabs":this.state.allTabs}, () => {
+    chrome.storage.local.set({"tabs":this.state.tabsWithIds}, () => {
       console.log("tabs have been saved");
     })
   }
   deleteTabs () {
-    this.setState({allTabs:[], tabsWithIds:[]}, () => {
+    this.setState({tabsWithIds:[]}, () => {
       chrome.storage.local.remove("tabs", () => {
         console.log("tabs have been deleted");
       })
