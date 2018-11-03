@@ -8676,6 +8676,8 @@ var ListContainer = function (_Component) {
   }, {
     key: "searchTabs",
     value: function searchTabs(stringId) {
+      var _this6 = this;
+
       if (this.state.tabsWithIds !== null) {
         var numToRemove = 1;
         var copy = this.state.tabsWithIds.slice();
@@ -8685,13 +8687,15 @@ var ListContainer = function (_Component) {
           return passCondition;
         });
         copy.splice(indexToRemove, numToRemove);
-        this.setState({ tabsWithIds: copy });
+        this.setState({ tabsWithIds: copy }, function () {
+          _this6.saveTabs();
+        });
       }
     }
   }, {
     key: "renderList",
     value: function renderList() {
-      var _this6 = this;
+      var _this7 = this;
 
       var data = null;
       var noTabs = this.state.tabsWithIds.length === 0 ? true : false;
@@ -8709,7 +8713,7 @@ var ListContainer = function (_Component) {
             var url = urlObj.url;
             var id = urlObj.tabId;
             return _react2.default.createElement(_ListItem2.default, {
-              callback: _this6.searchTabs,
+              callback: _this7.searchTabs,
               key: id,
               id: id,
               url: url });
@@ -8725,7 +8729,7 @@ var ListContainer = function (_Component) {
   }, {
     key: "render",
     value: function render() {
-      var _this7 = this;
+      var _this8 = this;
 
       return _react2.default.createElement(
         _react2.default.Fragment,
@@ -8737,14 +8741,14 @@ var ListContainer = function (_Component) {
           _react2.default.createElement(
             "button",
             { onClick: function onClick() {
-                return _this7.deleteTabs();
+                return _this8.deleteTabs();
               } },
             "delete all tabs"
           ),
           _react2.default.createElement(
             "button",
             { onClick: function onClick() {
-                return _this7.getPinnedTabs();
+                return _this8.getPinnedTabs();
               } },
             "get pinned tabs"
           )
@@ -8808,19 +8812,14 @@ var ListItem = function (_Component) {
   _createClass(ListItem, [{
     key: "deleteTab",
     value: function deleteTab() {
-      var _this2 = this;
-
       var stateCopy = this.state;
       var stringId = stateCopy.id.toString();
-      chrome.storage.local.remove(stringId, function () {
-        console.log("tab has been deleted");
-        _this2.props.callback(stringId);
-      });
+      this.props.callback(stringId);
     }
   }, {
     key: "renderTab",
     value: function renderTab() {
-      var _this3 = this;
+      var _this2 = this;
 
       if (this.state.url !== null) {
         return _react2.default.createElement(
@@ -8832,7 +8831,7 @@ var ListItem = function (_Component) {
             _react2.default.createElement(
               "button",
               { className: "deleteTab", onClick: function onClick() {
-                  return _this3.deleteTab();
+                  return _this2.deleteTab();
                 } },
               "Delete tab"
             ),

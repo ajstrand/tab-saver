@@ -118,7 +118,10 @@ class ListContainer extends Component {
         return passCondition;
       })
       copy.splice(indexToRemove, numToRemove);
-      this.setState({tabsWithIds:copy});
+      this.setState({tabsWithIds:copy}, () => {
+        this.saveTabs();
+      });
+      
     }
     
   }
