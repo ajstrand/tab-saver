@@ -11,10 +11,7 @@ class ListItem extends Component {
   deleteTab () {
     let stateCopy = this.state;
     let stringId = stateCopy.id.toString();
-    chrome.storage.local.remove(stringId, () => {
-      console.log("tab has been deleted");
-      this.props.callback(stringId);
-    })
+    this.props.callback(stringId);
   }
   renderTab () {
     if(this.state.url !== null){

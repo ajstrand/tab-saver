@@ -37,10 +37,13 @@ function make(tabsData, _) {
               var downloadTabs = (
       function (tabsArr) {
         let jsonData = JSON.stringify(tabsArr)
-        var element = document.createElement("a");
-        var file = new Blob([jsonData], {type: 'application/json'});
+        let element = document.createElement("a");
+        let jsonArr = [jsonData];
+        let obj = {type: 'application/json'};
+        let file = new Blob(jsonArr, obj);
+        let filename = "mySavedTabs.json"
         element.href = URL.createObjectURL(file);
-        element.download = "mySavedTabs.json";
+        element.download = fileName;
         element.click();
       }
       );
