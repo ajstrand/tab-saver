@@ -1,39 +1,31 @@
-import React, {Component} from "react";
-class ListItem extends Component {
-  constructor(props){
-    super(props);
-    this.state = {
-      url:props.url,
-      id:props.id
-    };
-    this.deleteTab = this.deleteTab.bind(this);
-  }
-  deleteTab () {
-    let stateCopy = this.state;
-    let stringId = stateCopy.id.toString();
-    this.props.callback(stringId);
-  }
-  renderTab () {
-    if(this.state.url !== null){
+import React, { useState } from "react";
+const ListItem = props => {
+  const [url, setUrl] = useState(props.url);
+  const [id, setId] = useState(props.id);
+
+  const deleteTab = () => {
+    const idCopy = id.toString();
+    props.callback(idCopy);
+  };
+  const renderTab = () => {
+    if (url) {
       return (
         <React.Fragment>
-        <div className="row">
-        <button className="deleteTab" onClick={() => this.deleteTab()}>Delete tab</button>
-        <a href={this.state.url}><li>{this.state.url}</li></a>
-        </div>
-          </React.Fragment>
-      )
+          <div className="row">
+            <button className="deleteTab" onClick={() => deleteTab()}>
+              Delete tab
+            </button>
+            <a href={url}>
+              <li>{url}</li>
+            </a>
+          </div>
+        </React.Fragment>
+      );
+    } else {
+      return null;
     }
-    else {
-      return (null)
-    }
-    
-  }
-  render (){
-    return (
-      this.renderTab()
-    )
-  }
-}
+  };
+  return renderTab();
+};
 
 export default ListItem;

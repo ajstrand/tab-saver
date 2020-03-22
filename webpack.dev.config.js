@@ -6,7 +6,7 @@ module.exports = {
   mode:"development",
   output: {
     path: path.resolve(__dirname, "dist"),
-    filename: "bundle.js",
+    filename: "popup.bundle.js",
     publicPath: "/dist"
   },
   devtool: 'cheap-module-source-map',

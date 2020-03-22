@@ -1,16 +1,9 @@
-import "./newtab.scss"
-
-import React, {Component} from "react";
+import React from "react";
 import ListContainer from "./ListContainer";
-class App extends Component {
-  constructor(props){
-    super(props);
-  }
-  render (){
+const App = () => {
     return (
       <ListContainer></ListContainer>
     );
-  }
 }
 
 export default App;
